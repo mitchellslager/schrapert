@@ -6,15 +6,20 @@ import { parse } from 'node-html-parser'
 import chalk from 'chalk'
 import { selectors, urls } from './constants'
 
-const fetchNewThisWeek = async () => {
+const fetchNewThisWeek = () => {
+  getPageContent(urls.newThisWeek)
+}
+
+const getPageContent = async (url: string) => {
   try {
     // Fetch URL and parse HTML with node-html-parser
-    const res = await fetch(urls.newThisWeek)
+    const res = await fetch(url)
     const body = await res.text()
     const parsed = parse(body)
 
     // Select all relevant items on the page
     const view = parsed.querySelector(selectors.view)
+    const nextPage = parsed.querySelector(selectors.nextPage)?.attributes.href
     const items = view?.querySelectorAll(selectors.item)
 
     // Log the artist and album title in the console
@@ -23,13 +28,12 @@ const fetchNewThisWeek = async () => {
       const title = item.querySelector(selectors.title)?.text.toString()
       console.log(`${chalk.blue(artist)} - ${chalk.red(title)}`)
     })
-  } catch (error) {
-    console.log(error)
-  }
-}
 
-const getPageContent = async (url: string) => {
-  try {
+    if (!nextPage) {
+      return
+    }
+
+    getPageContent(`${urls.base}${nextPage}`)
   } catch (err) {
     console.log(err)
   }
