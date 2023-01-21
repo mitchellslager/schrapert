@@ -12,5 +12,6 @@ export const selectors = {
   item: '.node-record',
   artist: '.field-name-field-artist',
   title: '.field-name-title',
+  addToCartButton: '.add-to-cart',
   nextPage: '.pager-next > a',
 }
