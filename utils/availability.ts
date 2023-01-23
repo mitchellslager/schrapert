@@ -1,11 +1,11 @@
-export type Availability = 'yes' | 'no' | 'pre-order'
+import { Availability } from '../scripts/types'
 
-export function getAvailability(text?: string) {
+export function getAvailability(label?: string) {
   const mapping: { [key: string]: Availability } = {
     'out of stock': 'no',
     'add to cart': 'yes',
     'pre order': 'pre-order',
   }
 
-  return text ? mapping[text] ?? 'no' : 'no'
+  return label ? mapping[label] ?? 'no' : 'no'
 }

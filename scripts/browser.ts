@@ -2,25 +2,19 @@ import chalk from 'chalk'
 import { writeFile } from 'fs'
 import path from 'path'
 import puppeteer, { ElementHandle } from 'puppeteer'
-import { Availability, getAvailability } from '../utils/availability'
-import { Arguments } from './cli'
+import { getAvailability } from '../utils/availability'
 import { selectors } from './constants'
+import { Arguments, Item } from './types'
 
-type Item = {
-  artist: string
-  title: string
-  available: Availability
-}
-
-async function startBrowser(url: string, argv: Arguments) {
-  const browser = await puppeteer.launch({ headless: argv.headless })
+async function startBrowser(url: string, { headless, limit }: Arguments) {
+  const browser = await puppeteer.launch({ headless })
   const page = await browser.newPage()
   await page.goto(url)
   await page.setViewport({ width: 1080, height: 1024 })
 
   const arr: Item[] = []
 
-  for (let i = 0; i < argv.limit; i++) {
+  for (let i = 0; i < limit; i++) {
     const view = await page.waitForSelector(selectors.view)
     const nextPage = await page?.$(selectors.nextPage)
     const items = await view?.$$(selectors.product)

@@ -6,20 +6,17 @@ import startBrowser from './browser'
 import { page } from './constants'
 import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
-
-export interface Arguments {
-  [x: string]: unknown
-  headless: boolean
-  limit: number
-}
+import { getCategoryLink } from '../utils/url'
+import { Arguments, CategoryArguments, SearchArguments } from './types'
 
 yargs(hideBin(process.argv))
+  .scriptName('schrapert')
   .options({
     headless: { type: 'boolean', default: true },
     limit: { type: 'number', default: 5 },
   })
   .command(
-    'new',
+    ['new', '$0'],
     'Releases from this week',
     () => {},
     (argv) => getLatestReleases(argv)
@@ -31,13 +28,29 @@ yargs(hideBin(process.argv))
     (argv) => getBackInStock(argv)
   )
   .command(
-    'electro',
-    'Get releases by genre',
-    () => {},
-    (argv) => getByGenre(argv)
+    'category [category]',
+    'Get releases by category',
+    (yargs) => {
+      return yargs.positional('category', {
+        choices: ['electro', 'detroit'],
+        describe: 'Category to search',
+        default: 'electro',
+      } as const)
+    },
+    (argv) => getReleasesByCategory(argv)
   )
-  .help()
-  .demandCommand(1).argv
+  .command(
+    'search [terms..]',
+    'Multi-term search and save what in stock only',
+    (yargs) => {
+      return yargs.positional('terms', {
+        coerce: (val: string[]) => val,
+        demandOption: true,
+      })
+    },
+    (argv) => getSearchResults(argv)
+  )
+  .help().argv
 
 function getLatestReleases(argv: Arguments) {
   console.log('Get latest releases')
@@ -49,7 +62,12 @@ function getBackInStock(argv: Arguments) {
   startBrowser(page.backInStock, argv)
 }
 
-function getByGenre(argv: Arguments) {
-  console.log('Get by genre')
-  startBrowser(page.electro, argv)
+function getReleasesByCategory(argv: CategoryArguments) {
+  console.log(`Get by category: ${argv.category}`)
+  const link = getCategoryLink(argv.category)
+  startBrowser(link, argv)
+}
+
+function getSearchResults(argv: SearchArguments) {
+  console.log(`Get search results for: ${argv.terms}`)
 }

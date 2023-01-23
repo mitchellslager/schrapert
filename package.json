@@ -1,12 +1,12 @@
 {
-  "name": "node-cli-scraper",
+  "name": "schrapert",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "build": "node esbuild.js",
-    "start": "pnpm build && node build/cli.js --limit 2",
-    "start:no-headless": "pnpm build && node build/cli.js --no-headless",
+    "start": "pnpm build && node build/cli.js",
+    "start:no-headless": "pnpm start --no-headless",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
