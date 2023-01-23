@@ -6,6 +6,7 @@
   "scripts": {
     "build": "node esbuild.js",
     "start": "pnpm build && node build/cli.js",
+    "start:no-headless": "pnpm build && node build/cli.js --no-headless",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -15,9 +16,11 @@
     "chalk": "^5.2.0",
     "esbuild": "^0.17.3",
     "node-html-parser": "^6.1.4",
-    "puppeteer": "^19.5.2"
+    "puppeteer": "^19.5.2",
+    "yargs": "^17.6.2"
   },
   "devDependencies": {
-    "@types/node": "^18.11.18"
+    "@types/node": "^18.11.18",
+    "@types/yargs": "^17.0.20"
   }
 }

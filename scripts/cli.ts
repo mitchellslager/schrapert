@@ -2,24 +2,23 @@
  * Rush Hour scraper
  * Scrapes the latest releases from https://www.rushhour.nl
  */
-import { writeFile } from 'node:fs'
-import { parse } from 'node-html-parser'
-import chalk from 'chalk'
-import { selectors, urls } from './constants'
 import startBrowser from './browser'
+import { page } from './constants'
+import yargs from 'yargs/yargs'
+import { hideBin } from 'yargs/helpers'
 
-type Item = {
-  artist: string
-  title: string
-  available: boolean
+export interface Arguments {
+  [x: string]: unknown
+  headless: boolean
 }
 
-const fetchNewThisWeek = async () => {
-  startBrowser()
-  // const content = await getAllPageContent(urls.newThisWeek)
-  // console.log(content)
+const parser = yargs(hideBin(process.argv)).options({
+  headless: { type: 'boolean', default: true },
+})
 
-  // writeFile('data.txt', 'sdfs', () => console.log('test'))
+async function app() {
+  const argv = await parser.argv
+  startBrowser(page.electro, argv)
 }
 
-fetchNewThisWeek()
+app()

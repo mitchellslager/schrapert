@@ -2,9 +2,12 @@
  * Constants
  * Collection of URLs and CSS selectors.
  */
-export const urls = {
-  base: 'https://www.rushhour.nl',
-  newThisWeek: 'https://www.rushhour.nl/new-this-week',
+const baseUrl = 'https://www.rushhour.nl'
+
+export const page = {
+  newThisWeek: `${baseUrl}/new-this-week`,
+  backInStock: `${baseUrl}/mailqueue/2591`,
+  electro: `${baseUrl}/search?genre=1651`,
 }
 
 export const selectors = {
@@ -12,6 +15,6 @@ export const selectors = {
   item: '.node-record',
   artist: '.field-name-field-artist',
   title: '.field-name-title',
-  addToCartButton: '.button-cart',
+  addToCartButton: '[id^="order-button"]',
   nextPage: '.pager-next > a',
 }
