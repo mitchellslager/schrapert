@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "node esbuild.js",
-    "start": "pnpm build && node build/cli.js",
+    "start": "pnpm build && node build/cli.js --limit 2",
     "start:no-headless": "pnpm build && node build/cli.js --no-headless",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

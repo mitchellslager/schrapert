@@ -2,14 +2,14 @@ import chalk from 'chalk'
 import { writeFile } from 'fs'
 import path from 'path'
 import puppeteer, { ElementHandle } from 'puppeteer'
-import { Available, getAvailability } from '../utils/availability'
+import { Availability, getAvailability } from '../utils/availability'
 import { Arguments } from './cli'
 import { selectors } from './constants'
 
 type Item = {
   artist: string
   title: string
-  available: Available
+  available: Availability
 }
 
 async function startBrowser(url: string, argv: Arguments) {
@@ -20,10 +20,10 @@ async function startBrowser(url: string, argv: Arguments) {
 
   const arr: Item[] = []
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < argv.limit; i++) {
     const view = await page.waitForSelector(selectors.view)
     const nextPage = await page?.$(selectors.nextPage)
-    const items = await view?.$$(selectors.item)
+    const items = await view?.$$(selectors.product)
 
     console.log(chalk.yellow(`Now scraping from:`, page.url()))
 

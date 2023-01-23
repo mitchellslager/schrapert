@@ -10,15 +10,46 @@ import { hideBin } from 'yargs/helpers'
 export interface Arguments {
   [x: string]: unknown
   headless: boolean
+  limit: number
 }
 
-const parser = yargs(hideBin(process.argv)).options({
-  headless: { type: 'boolean', default: true },
-})
+yargs(hideBin(process.argv))
+  .options({
+    headless: { type: 'boolean', default: true },
+    limit: { type: 'number', default: 5 },
+  })
+  .command(
+    'new',
+    'Releases from this week',
+    () => {},
+    (argv) => getLatestReleases(argv)
+  )
+  .command(
+    'back',
+    'Releases that are back in stock',
+    () => {},
+    (argv) => getBackInStock(argv)
+  )
+  .command(
+    'electro',
+    'Get releases by genre',
+    () => {},
+    (argv) => getByGenre(argv)
+  )
+  .help()
+  .demandCommand(1).argv
 
-async function app() {
-  const argv = await parser.argv
+function getLatestReleases(argv: Arguments) {
+  console.log('Get latest releases')
+  startBrowser(page.newThisWeek, argv)
+}
+
+function getBackInStock(argv: Arguments) {
+  console.log('Get back in stock')
+  startBrowser(page.backInStock, argv)
+}
+
+function getByGenre(argv: Arguments) {
+  console.log('Get by genre')
   startBrowser(page.electro, argv)
 }
-
-app()
