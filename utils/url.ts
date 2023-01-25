@@ -1,4 +1,4 @@
-import { page } from '../scripts/constants'
+import { page } from '~scripts/constants'
 
 export function getCategoryLink(name: string) {
   return page[name]

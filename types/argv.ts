@@ -1,9 +1,10 @@
-export type Category = 'electro' | 'detroit'
+import { Category } from './scraper'
 
 export interface Arguments {
   [x: string]: unknown
   headless: boolean
   limit: number
+  inStockOnly: boolean
 }
 
 export interface CategoryArguments extends Arguments {
@@ -13,11 +14,3 @@ export interface CategoryArguments extends Arguments {
 export interface SearchArguments extends Arguments {
   terms: string[]
 }
-
-export type Item = {
-  artist: string
-  title: string
-  available: Availability
-}
-
-export type Availability = 'yes' | 'no' | 'pre-order'

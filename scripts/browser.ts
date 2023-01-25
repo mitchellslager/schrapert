@@ -1,16 +1,17 @@
-import chalk from 'chalk'
-import { writeFile } from 'fs'
-import path from 'path'
-import puppeteer, { ElementHandle } from 'puppeteer'
-import { getAvailability } from '../utils/availability'
+import { launch, Browser, ElementHandle } from 'puppeteer'
+import { Arguments } from '~types/argv'
+import { getAvailability } from '~utils/availability'
+import { Item } from '~types/scraper'
 import { selectors } from './constants'
-import { Arguments, Item } from './types'
 
-async function startBrowser(url: string, { headless, limit }: Arguments) {
-  const browser = await puppeteer.launch({ headless })
+export async function startBrowser({ headless }: Arguments) {
+  const browser = await launch({ headless })
+  return browser
+}
+
+async function getReleases(url: string, { limit, inStockOnly }: Arguments, browser: Browser) {
   const page = await browser.newPage()
   await page.goto(url)
-  await page.setViewport({ width: 1080, height: 1024 })
 
   const arr: Item[] = []
 
@@ -19,32 +20,22 @@ async function startBrowser(url: string, { headless, limit }: Arguments) {
     const nextPage = await page?.$(selectors.nextPage)
     const items = await view?.$$(selectors.product)
 
-    console.log(chalk.yellow(`Now scraping from:`, page.url()))
+    console.log(`Now scraping from:`, page.url())
 
-    if (items) arr.push(...(await getReleasesFromPage(items)))
+    if (items) arr.push(...(await getReleasesFromPage(items, inStockOnly)))
 
     if (nextPage) {
       await nextPage.click()
     } else break
   }
 
-  await browser.close()
-
-  console.log(chalk.green('Done. No more pages to scrape!'))
-
-  // Transform data to CSV and write to file
-  const headerRowData = ['artist', 'title', 'available'].join(',') + '\n'
-  const csvData = arr.map((item) => Object.values(item).join(',')).join('\n')
-
-  const output = path.resolve('build', 'data.csv')
-
-  writeFile(output, headerRowData + csvData, (err) => {
-    if (err) console.log(err)
-    else console.log(chalk.green(`Data has been saved to ${output}`))
-  })
+  return arr
 }
 
-const getReleasesFromPage = async (items: ElementHandle<Element>[]): Promise<Item[]> => {
+const getReleasesFromPage = async (
+  items: ElementHandle<Element>[],
+  inStockOnly: boolean
+): Promise<Item[]> => {
   const releases: Item[] = []
 
   for (const item of items) {
@@ -56,16 +47,24 @@ const getReleasesFromPage = async (items: ElementHandle<Element>[]): Promise<Ite
       .waitForSelector(selectors.title)
       .then((res) => res?.evaluate((node) => node.textContent))
 
-    const available = await item
+    const availability = await item
       .waitForSelector(selectors.addToCartButton)
       .then((res) => res?.evaluate((node) => node.textContent))
 
+    const available = getAvailability(availability?.toLowerCase())
+
     if (artist && title) {
-      releases.push({ artist, title, available: getAvailability(available?.toLowerCase()) })
+      if (inStockOnly) {
+        if (available === 'yes') {
+          releases.push({ artist, title, available })
+        }
+      } else {
+        releases.push({ artist, title, available })
+      }
     }
   }
 
   return releases
 }
 
-export default startBrowser
+export default getReleases

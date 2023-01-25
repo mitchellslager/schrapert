@@ -1,4 +1,8 @@
-import { Availability } from '../scripts/types'
+/**
+ * Availability util
+ * msgnjosgjosgno
+ */
+import { Availability } from '~types/scraper'
 
 export function getAvailability(label?: string) {
   const mapping: { [key: string]: Availability } = {

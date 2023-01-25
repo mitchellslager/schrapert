@@ -1,7 +1,8 @@
 /**
  * Constants
- * Collection of URLs and CSS selectors.
  */
+import { Item } from '~types/scraper'
+
 const baseUrl = 'https://www.rushhour.nl'
 
 export const page: { [key: string]: string } = {
@@ -20,3 +21,5 @@ export const selectors = {
   title: '.field-name-title',
   view: '.view',
 }
+
+export const headerRows: (keyof Item)[] = ['artist', 'title', 'available']
