@@ -15,6 +15,8 @@ async function getReleases(url: string, { limit, inStockOnly }: Arguments, brows
 
   const arr: Item[] = []
 
+  // The total amount of pages is unknown.
+  // So we loop through a set number of pages.
   for (let i = 0; i < limit; i++) {
     const view = await page.waitForSelector(selectors.view)
     const nextPage = await page?.$(selectors.nextPage)

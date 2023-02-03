@@ -2,7 +2,8 @@
   "name": "schrapert",
   "version": "1.0.0",
   "description": "CLI tool I made to scrape my favourite record store",
-  "main": "scripts/cli.ts",
+  "main": "./scripts/cli.ts",
+  "bin": "./build/cli.js",
   "scripts": {
     "build": "node esbuild.js",
     "start": "pnpm build && node build/cli.js",
